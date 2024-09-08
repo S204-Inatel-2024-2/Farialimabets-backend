@@ -1,19 +1,25 @@
+version: '3'
+
 services:
-  mysql:
-    image: mysql
+  database:
+    image: mysql:5.7
     restart: unless-stopped
-    container_name: mysql
+    container_name: mysql-database
     command: --default-authentication-plugin=mysql_native_password
     ports:
-      - 3306:3306
-    env_file:
-      - .env
+      - '3306:3306'
     environment:
-      - MYSQL_USER=username
-    volumes:
-      - mysql:/var/lib/mysql
+      MYSQL_USER: admin
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_PASSWORD: 123456
+    logging:
+      driver: "none"
     networks:
-      - cross-network
+      - rs-network
+    volumes:
+      - database:/var/lib/mysql
+
+
 
   redis:
     image: bitnami/redis
@@ -24,11 +30,11 @@ services:
     env_file:
       - .env
     networks:
-      - cross-network
+      - rs-network
 
 networks:
-  cross-network:
+  rs-network:
     driver: bridge
 
 volumes:
-  mysql: {}
+  database:
