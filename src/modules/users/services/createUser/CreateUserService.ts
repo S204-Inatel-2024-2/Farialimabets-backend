@@ -7,8 +7,8 @@ import { instanceToInstance } from 'class-transformer';
 import { IResponseDTO } from '@dtos/IResponseDTO';
 import { IConnection } from '@shared/typeorm';
 import { Route, Tags, Post, Body } from 'tsoa';
-import { ICryptoProviderDTO } from '@shared/container/providers/CryptoProvider/models/ICryptoProvider';
 import { IHashProviderDTO } from '@shared/container/providers/HashProvider/models/IHashProvider';
+import { AppError } from '@shared/errors/AppError';
 
 @Route('/users')
 @injectable()
@@ -37,15 +37,20 @@ export class CreateUserService {
     await trx.startTransaction();
     try {
 
-      const { password, ...rest } = userData;
+      const { password,email, ...rest } = userData;
+
+      if (!password || !email) {
+        throw new AppError('BAD_REQUEST', 'Email or password are blank', 400)
+      }
       const hashedPassword = await this.hashProvider.generateHash(password);
+
 
       const user = await this.usersRepository.create({
         ...rest,
+        email,
         password: hashedPassword
       }, trx);
       
-      console.log('userData com senha encriptograda: ', userData)
 
       await this.cacheProvider.invalidatePrefix(
         `${this.connection.client}:users`,

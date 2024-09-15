@@ -15,7 +15,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [
+"plugins": [
     "@typescript-eslint",
     "eslint-plugin-import-helpers",
     "prettier"

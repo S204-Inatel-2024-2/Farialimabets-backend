@@ -10,10 +10,12 @@ export type ICodeDTO =
   | 'FAILED_TO_CREATE'
   | 'FAILED_TO_LIST'
   | 'FILE_NOT_FOUND'
+  | 'BAD_REQUEST'
   | 'NOT_FOUND'
   | 'CREATED'
   | 'UPDATED'
   | 'DELETED'
   | 'PATCHED'
+  | 'AUTHENTICATED'
   | 'LISTED'
   | 'FOUND';

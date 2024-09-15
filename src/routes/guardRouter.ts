@@ -23,6 +23,10 @@ const exceptions: IExceptionDTO = {
       methods: ['GET', 'POST'],
     },
     {
+      url: /^\/login/,
+      methods: ['POST'],
+    },
+    {
       url: /^\/second-example\/.*/,
       methods: ['GET', 'POST', 'PUT'],
     },
