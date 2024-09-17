@@ -12,6 +12,7 @@ const listUserController = new ListUserController();
 const showUserController = new ShowUserController();
 const updateUserController = new UpdateUserController();
 const deleteUserController = new DeleteUserController();
+const showSelfUserController = new ShowUserController();
 const authenticateUserController = new AuthenticateUserController();
 
 userRouter.post('/login', authenticateUserController.handle);
@@ -25,5 +26,7 @@ userRouter
   .get(showUserController.handle)
   .put(updateUserController.handle)
   .delete(deleteUserController.handle);
+
+userRouter.route('/me').get(showSelfUserController.handle);
 
 export { userRouter };
