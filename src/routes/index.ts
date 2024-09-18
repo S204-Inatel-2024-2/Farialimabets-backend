@@ -9,3 +9,5 @@ routes.use(userRouter);
 routes.use(systemRouter)
 export { routes };
 
+import { financeRouter } from './financeRouter';
+routes.use(financeRouter);

@@ -5,6 +5,7 @@ import { ListUserController } from '@modules/users/services/listUser/ListUserCon
 import { UpdateUserController } from '@modules/users/services/updateUser/UpdateUserController';
 import { DeleteUserController } from '@modules/users/services/deleteUser/DeleteUserController';
 import { AuthenticateUserController } from '@modules/users/services/authenticateUser/AuthenticateUserController';
+import { ShowSelfUserController } from '@modules/users/services/showSelfUser/ShowSelfUserController';
 
 const userRouter = Router();
 const createUserController = new CreateUserController();
@@ -12,7 +13,7 @@ const listUserController = new ListUserController();
 const showUserController = new ShowUserController();
 const updateUserController = new UpdateUserController();
 const deleteUserController = new DeleteUserController();
-const showSelfUserController = new ShowUserController();
+const showSelfUserController = new ShowSelfUserController();
 const authenticateUserController = new AuthenticateUserController();
 
 userRouter.post('/login', authenticateUserController.handle);

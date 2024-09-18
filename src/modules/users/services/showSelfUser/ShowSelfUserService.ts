@@ -25,7 +25,15 @@ export class ShowSelfUserService {
 
     await trx.startTransaction();
     try {
-      const user = await this.usersRepository.findBy({ where: { id } });
+      const user = await this.usersRepository.findBy(
+        {
+          where: { id },
+          relations: {
+            wallet: true,
+          },
+        },
+        trx,
+      );
 
       if (!user) {
         throw new AppError('NOT_FOUND', 'User not found', 404);
