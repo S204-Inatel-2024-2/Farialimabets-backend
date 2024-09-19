@@ -1,1 +1,775 @@
-{}
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"ICodeDTO": {
+				"type": "string",
+				"enum": [
+					"FAILED_TO_CREATE_NOTIFICATION",
+					"FAILED_TO_CREATE_LEAD",
+					"FAILED_TO_GET_SESSION",
+					"INVALID_DELAY_FORMAT",
+					"TOO_MANY_REQUESTS",
+					"FAILED_TO_CREATE",
+					"FAILED_TO_LIST",
+					"FILE_NOT_FOUND",
+					"BAD_REQUEST",
+					"NOT_FOUND",
+					"CREATED",
+					"UPDATED",
+					"DELETED",
+					"PATCHED",
+					"AUTHENTICATED",
+					"LISTED",
+					"FOUND"
+				]
+			},
+			"Record_string.string_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"TransactionDTO": {
+				"properties": {
+					"value": {
+						"type": "number",
+						"format": "double"
+					},
+					"product": {
+						"$ref": "#/components/schemas/Record_string.string_"
+					}
+				},
+				"required": [
+					"value",
+					"product"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deleted_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"wallet_id": {
+						"type": "string"
+					},
+					"wallet": {
+						"$ref": "#/components/schemas/Wallet"
+					},
+					"sales": {
+						"items": {
+							"$ref": "#/components/schemas/Sales"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"created_at",
+					"updated_at",
+					"deleted_at",
+					"name",
+					"email",
+					"password",
+					"wallet_id",
+					"wallet",
+					"sales"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Wallet": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deleted_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"value": {
+						"type": "number",
+						"format": "double"
+					},
+					"last_transactions": {
+						"items": {
+							"$ref": "#/components/schemas/TransactionDTO"
+						},
+						"type": "array"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					}
+				},
+				"required": [
+					"id",
+					"created_at",
+					"updated_at",
+					"deleted_at",
+					"value",
+					"last_transactions",
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Sales": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deleted_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"user_id": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					}
+				},
+				"required": [
+					"id",
+					"created_at",
+					"updated_at",
+					"deleted_at",
+					"user_id",
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseDTO_User_": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"message_code": {
+						"$ref": "#/components/schemas/ICodeDTO"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/User"
+					}
+				},
+				"required": [
+					"code",
+					"message_code",
+					"message",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUserDTO": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"wallet_id": {
+						"type": "string"
+					},
+					"wallet": {
+						"$ref": "#/components/schemas/Wallet"
+					},
+					"sales": {
+						"items": {
+							"$ref": "#/components/schemas/Sales"
+						},
+						"type": "array"
+					},
+					"id": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deleted_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IListDTO_User_": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"message_code": {
+						"$ref": "#/components/schemas/ICodeDTO"
+					},
+					"message": {
+						"type": "string"
+					},
+					"pagination": {
+						"properties": {
+							"lastPage": {
+								"type": "number",
+								"format": "double"
+							},
+							"perPage": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"lastPage",
+							"perPage",
+							"page",
+							"total"
+						],
+						"type": "object"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/User"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"code",
+					"message_code",
+					"message",
+					"pagination",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseDTO_null_": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"message_code": {
+						"$ref": "#/components/schemas/ICodeDTO"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"code",
+					"message_code",
+					"message",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RSA_JWK": {
+				"properties": {
+					"kty": {
+						"type": "string"
+					},
+					"n": {
+						"type": "string"
+					},
+					"e": {
+						"type": "string"
+					},
+					"d": {
+						"type": "string"
+					},
+					"p": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"dp": {
+						"type": "string"
+					},
+					"dq": {
+						"type": "string"
+					},
+					"qi": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"kty",
+					"n",
+					"e"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"JWK__use-string__": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/RSA_JWK"
+					},
+					{
+						"properties": {
+							"use": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"use"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"IResponseDTO_Wallet_": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"message_code": {
+						"$ref": "#/components/schemas/ICodeDTO"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/Wallet"
+					}
+				},
+				"required": [
+					"code",
+					"message_code",
+					"message",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IWalletDTO": {
+				"properties": {
+					"value": {
+						"type": "number",
+						"format": "double"
+					},
+					"last_transactions": {
+						"items": {
+							"$ref": "#/components/schemas/TransactionDTO"
+						},
+						"type": "array"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"id": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deleted_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"guardRouter": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "jwt",
+				"description": "Don't need to incude 'Bearer' keyword."
+			}
+		}
+	},
+	"info": {
+		"title": "Awesome API",
+		"version": "1.0.0",
+		"description": "An awesome API created using cross-api",
+		"contact": {
+			"email": "example@mail.com",
+			"name": "Your Name Here",
+			"url": "https://example.com.br"
+		}
+	},
+	"paths": {
+		"/users": {
+			"post": {
+				"operationId": "CreateUserService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponseDTO_User_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUserDTO"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListUserService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IListDTO_User_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "ShowUserService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponseDTO_User_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUserService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponseDTO_User_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUserDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteUserService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponseDTO_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/me": {
+			"get": {
+				"operationId": "ShowSelfUserService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponseDTO_User_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/generate-keys": {
+			"get": {
+				"operationId": "GenerateKeyService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JWK__use-string__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"System"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/finances": {
+			"post": {
+				"operationId": "CreateWalletService",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IResponseDTO_Wallet_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Wallet"
+				],
+				"security": [
+					{
+						"guardRouter": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IWalletDTO"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "http://localhost:3333/"
+		},
+		{
+			"url": "https://your-production-domain.com",
+			"description": "Api Production"
+		}
+	],
+	"consumes": [
+		"application/json",
+		"multipart/form-data"
+	],
+	"produces": [
+		"application/json"
+	]
+}

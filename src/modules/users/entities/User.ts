@@ -1,7 +1,8 @@
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Base } from '@shared/container/modules/entities/Base';
 import { Exclude } from 'class-transformer';
 import { Wallet } from '@modules/finances/entities/Wallet';
+import Sales from '@modules/finances/entities/Sale';
 
 @Entity('users')
 export class User extends Base {
@@ -25,4 +26,10 @@ export class User extends Base {
     referencedColumnName: 'id',
   })
   public wallet: Wallet;
+
+  @OneToMany(() => Sales, sales => sales.user, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  public sales: Array<Sales>;
 }
