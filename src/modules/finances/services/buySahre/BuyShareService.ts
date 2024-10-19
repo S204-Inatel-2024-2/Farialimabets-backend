@@ -100,7 +100,7 @@ export class BuyShareService {
       await this.walletsRepository.update(user.wallet, trx);
 
       await this.cacheProvider.invalidatePrefix(
-        `${this.connection.client}:finances`,
+        `${this.connection.client}:shares-${user_id}`,
       );
 
       if (trx.isTransactionActive) await trx.commitTransaction();
