@@ -18,4 +18,5 @@ export type ICodeDTO =
   | 'PATCHED'
   | 'AUTHENTICATED'
   | 'LISTED'
+  | 'SUCCESS'
   | 'FOUND';

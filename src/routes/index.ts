@@ -3,11 +3,13 @@ import { userRouter } from './userRouter';
 import { systemRouter } from './systemRouter';
 import { guardRouter } from './guardRouter';
 
-const routes = Router();
-routes.use(guardRouter); // Use this before all routes to protect using jwt and set open routes/methods at guardRouter.ts
-routes.use(userRouter);
-routes.use(systemRouter)
-export { routes };
-
 import { financeRouter } from './financeRouter';
+import { shareRouter } from './shareRouter';
+
+const routes = Router();
+routes.use(guardRouter);
+routes.use(userRouter);
+routes.use(systemRouter);
 routes.use(financeRouter);
+routes.use(shareRouter);
+export { routes };
