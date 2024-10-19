@@ -55,7 +55,7 @@ export class ListShareService {
       return {
         code: 200,
         message_code: 'LISTED',
-        message: 'Successfully listed users',
+        message: 'Successfully listed shares',
         pagination: {
           total: cache.total,
           page,
