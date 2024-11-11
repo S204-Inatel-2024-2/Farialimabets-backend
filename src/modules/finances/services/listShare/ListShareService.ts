@@ -37,7 +37,7 @@ export class ListShareService {
     try {
       const cacheKey = `${
         this.connection.client
-      }:shares-${user_id}:${page}:${limit}:${JSON.stringify(filters)}`;
+      }:shares:${user_id}:${page}:${limit}:${JSON.stringify(filters)}`;
 
       let cache = await this.cacheProvider.recovery<ICacheDTO<Share>>(cacheKey);
 
