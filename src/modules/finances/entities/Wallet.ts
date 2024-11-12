@@ -28,13 +28,6 @@ export class Wallet extends Base {
   @OneToOne(() => User, user => user.wallet)
   public user: User;
 
-  @BeforeInsert()
-  public setDefaultLastTransactions(): void {
-    if (!this.last_transactions) {
-      this.last_transactions = [];
-    }
-  }
-
   @BeforeUpdate()
   @BeforeInsert()
   public stringifyLastTransactions(): void {
@@ -50,6 +43,13 @@ export class Wallet extends Base {
       this.last_transactions = JSON.parse(
         this.last_transactions as unknown as string,
       );
+    }
+  }
+
+  @BeforeInsert()
+  public setDefaultLastTransactions(): void {
+    if (!this.last_transactions) {
+      this.last_transactions = [];
     }
   }
 }
