@@ -85,10 +85,11 @@ export class SellShareService {
       if (!user.wallet.last_transactions.length) {
         user.wallet.last_transactions = [];
       }
+
       user.wallet.last_transactions.push({
-        sold_value: shareData.value,
-        quantity: shareData.quantity,
-        company: shareData.company ?? 'no-company',
+        sold_value: shareData?.value,
+        quantity: shareData?.quantity,
+        company: shareData?.company ?? 'no-company',
         profit: saleValue - shareData.quantity * share.purchase_price,
       });
 
