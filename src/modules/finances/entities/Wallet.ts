@@ -1,10 +1,20 @@
 import { User } from '@modules/users/entities/User';
 import { Base } from '@shared/container/modules/entities/Base';
-import { Column, Entity, OneToOne } from 'typeorm';
+import {
+  AfterLoad,
+  AfterUpdate,
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToOne,
+} from 'typeorm';
 
 interface TransactionDTO {
-  value: number;
-  product: Record<string, string>;
+  quantity: number;
+  sold_value: number;
+  company: string;
+  profit: number;
 }
 
 @Entity('wallets')
@@ -17,4 +27,29 @@ export class Wallet extends Base {
 
   @OneToOne(() => User, user => user.wallet)
   public user: User;
+
+  @BeforeInsert()
+  public setDefaultLastTransactions(): void {
+    if (!this.last_transactions) {
+      this.last_transactions = [];
+    }
+  }
+
+  @BeforeUpdate()
+  @BeforeInsert()
+  public stringifyLastTransactions(): void {
+    (this.last_transactions as unknown) = JSON.stringify(
+      this.last_transactions,
+    );
+  }
+
+  @AfterLoad()
+  @AfterUpdate()
+  public getLastTransactions(): void {
+    if (typeof this.last_transactions === 'string') {
+      this.last_transactions = JSON.parse(
+        this.last_transactions as unknown as string,
+      );
+    }
+  }
 }
