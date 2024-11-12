@@ -31,6 +31,14 @@ export class ShowSelfUserService {
           relations: {
             wallet: true,
           },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            shares: true,
+            wallet: { id: true, value: true, last_transactions: true },
+            wallet_id: true,
+          },
         },
         trx,
       );
