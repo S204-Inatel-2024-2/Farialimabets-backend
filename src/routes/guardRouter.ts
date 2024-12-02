@@ -32,7 +32,7 @@ const exceptions: IExceptionDTO = {
     },
     {
       url: /^\/generate-keys/,
-      methods: ['GET'],
+      methods: ['POST'],
     },
     {
       url: /^\/second-example\/.*/,
