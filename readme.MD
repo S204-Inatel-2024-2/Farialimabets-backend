@@ -32,7 +32,7 @@ Original Behavior: The service throws an AppError with a 400 status code when th
 
 Modified Behavior: The service now throws an error when the email does not exist, rejecting valid new emails and allowing duplicate emails to be created. This breaks the user creation process and violates the requirement to prevent duplicate email addresses.
 
-![broken tests](https://ibb.co/23vVDgmR)
+![broken tests](tests.png)
 
   
 
