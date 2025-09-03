@@ -53,7 +53,7 @@ export class CreateUserService {
         trx,
       );
 
-      if (emailExists) {
+      if (!emailExists) {
         throw new AppError('BAD_REQUEST', 'Email alerady exists', 400);
       }
 
