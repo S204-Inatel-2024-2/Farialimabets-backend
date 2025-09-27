@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    triggers {
+      githubPush()
+    }
+    environment {
+        API_URL = 'http://localhost:3333'
+        EMAIL = 'luismendesdecarvalho35@gmail.com'
+        PASSWORD = 'bpzu odnm fqxn sioy'
+        RECIPIENT_EMAIL = 'pipelineteste11@gmail.com'
+        MYSQL_DATABASE = 'database_test'
+        MYSQL_ROOT_PASSWORD = '12345'
+        REDIS_HOST = 'localhost'
+        MYSQL_PASSWORD = '12345'
+        MYSQL_PORT = '3307'
+        MYSQL_USER = 'root'
+        MYSQL_HOST= 'localhost'
+        NODE_ENV = 'test'
+        PORT = '3333'
+        REDIS_PORT = '6379'
+        REDIS_PASSWORD = '12345'
+        REDIS_PREFIX = 'api'
+    }
+
+    stages {
+        stage('Testes') {
+            steps {
+                sh 'npm install'
+                
+                
+                //sh 'docker-compose up -d'
+                sh 'npm run dev &'
+                sh 'sleep 10'
+                sh 'npm test'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+
+            post {
+                success {
+                    archiveArtifacts artifacts: 'dist/', fingerprint: true
+                    archiveArtifacts artifacts: 'coverage/lcov-report/index.html', fingerprint: true
+                }
+            }
+        }
+
+        stage('Notificar usuários') {
+            steps {
+                sh 'node src/modules/users/services/sendEmail.ts'
+            }
+        }
+    }
+}
