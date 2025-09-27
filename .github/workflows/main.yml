@@ -73,6 +73,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Ensure swc binaries installed
+        run: |
+          npm rebuild @swc/core --force
+  
       - name: Build
         run: npm run build
 
