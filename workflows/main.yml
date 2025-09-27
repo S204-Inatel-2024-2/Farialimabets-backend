@@ -1,0 +1,95 @@
+name: CI/CD Pipeline
+
+on: [push]
+
+env:
+    API_URL: ${{ secrets.API_URL }}
+    EMAIL: ${{ secrets.EMAIL }}
+    PASSWORD: ${{ secrets.PASSWORD }}
+    RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+    MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+    MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+    REDIS_HOST: ${{ secrets.REDIS_HOST }}
+    MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+    MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+    MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+    MYSQL_USER: ${{ secrets.MYSQL_USER }}
+    NODE_ENV: ${{ secrets.NODE_ENV }}
+    PORT: ${{ secrets.PORT }}
+    REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+    REDIS_PORT: ${{ secrets.REDIS_PORT }}
+    REDIS_PREFIX: ${{ secrets.REDIS_PREFIX }}
+
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Adicionar IP do GitHub ao arquivo de hosts
+      run: echo "$IP_DO_GITHUB github.com" | sudo tee -a /etc/hosts
+      env:
+        IP_DO_GITHUB: 20.201.28.151
+
+    - name: Create .env file
+      run: |
+        echo "PORT={{ secrets.PORT }}" > .env
+        echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" >> .env
+        echo "API_URL=${API_URL}" >> .env
+        echo "EMAIL=${EMAIL}" >> .env
+        echo "MYSQL_DATABASE=${MYSQL_DATABASE}" >> .env
+        echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}" >> .env
+        echo "REDIS_HOST=${REDIS_HOST}" >> .env
+        echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}" >> .env
+        echo "MYSQL_PORT=${MYSQL_PORT}" >> .env
+        echo "MYSQL_USER=${MYSQL_USER}" >> .env
+        echo "NODE_ENV=${NODE_ENV}" >> .env
+        echo "PORT=${PORT}" >> .env
+        echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
+        echo "REDIS_PORT=${REDIS_PORT}" >> .env
+        echo "REDIS_PREFIX=${REDIS_PREFIX}" >> .env
+
+    - name: Install dependencies
+      run: npm install
+    - name: Run docker images
+      run: docker-compose up -d  
+      
+    - name: Run api
+      run: |
+        yarn dev &
+
+    - name: Run tests
+      run: |  
+        sleep 10
+        yarn test --testPathPattern=Service.spec.ts
+  
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: npm install
+    - name: Build
+      run: npm run build
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist/
+    - name: Archive test reports
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: coverage/lcov-report/index.html   
+
+  notify:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: npm install
+    - name: Send email
+      run: node src/modules/users/services/sendEmail.ts
