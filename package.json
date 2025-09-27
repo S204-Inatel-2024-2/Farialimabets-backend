@@ -7,7 +7,7 @@
     "test": "set NODE_ENV=test&&jest --runInBand",
     "dev": "ts-node-dev -r tsconfig-paths/register --inspect --transpile-only src/shared/server.ts",
     "doc": "ts-node-dev doc.config.ts",
-    "build": "swc src --out-dir dist --copy-files --strip-leading-paths --ignore **/*.spec.ts",
+    "build": "tsc",
     "comp": "npx tsc && npx tsc-alias",
     "start": "node dist/shared/server.js"
   },
@@ -39,7 +39,7 @@
     "swc_mut_cjs_exports": "^0.99.0",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
