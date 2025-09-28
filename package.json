@@ -7,7 +7,7 @@
     "test": "set NODE_ENV=test&&jest --runInBand",
     "dev": "ts-node-dev -r tsconfig-paths/register --inspect --transpile-only src/shared/server.ts",
     "doc": "ts-node-dev doc.config.ts",
-    "build": "tsc",
+    "build": "tsc --noEmitOnError false",
     "comp": "npx tsc && npx tsc-alias",
     "start": "node dist/shared/server.js"
   },
