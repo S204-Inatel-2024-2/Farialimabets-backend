@@ -33,7 +33,7 @@ class App {
   }
 
   private staticRoutes(): void {
-    this.server.use('/api-docs', serve, setup(swaggerDocs));
+    // this.server.use('/api-docs', serve, setup(swaggerDocs));
     // this.server.use('/uploads', express.static(storageConfig.config.uploadsFolder)); // storageProvider
     this.server.use('/jwks', express.static(cryptoConfig.config.jwksPath)); 
   }

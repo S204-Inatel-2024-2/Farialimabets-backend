@@ -71,9 +71,9 @@ export class CryptoProvider implements ICryptoProviderDTO {
     );
 
     const jwtToken = sign(payload, secret, {
-      expiresIn: authConfig.config.jwt.expiresIn,
-      ...options,
-      algorithm: 'RS256',
+      // expiresIn: authConfig.config.jwt.expiresIn,
+      // ...options,
+      // algorithm: 'RS256',
     });
 
     const refreshToken = this.generateRefreshToken(ip);
