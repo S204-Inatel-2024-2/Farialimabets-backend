@@ -456,4 +456,82 @@ describe('CreateUserService', (): void => {
     expect(user.data.id).toBe('custom-id-123');
     expect(user.data.wallet.value).toBe(9999);
   });
+ it('Should throw error when fakeHashProvider.generateHash is mocked to throw', async (): Promise<void> => {
+    jest.spyOn(fakeHashProvider, 'generateHash').mockImplementationOnce(() => {
+      throw new AppError('BAD_REQUEST', 'Mocked hash error', 500);
+    });
+
+    await expect(
+      createUserService.execute({
+        email: 'mockhasherror@example.com',
+        password: 'password123',
+        name: 'Mock Hash Error',
+      })
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should throw error when fakeWalletsRepository.create is mocked to throw', async (): Promise<void> => {
+    jest.spyOn(fakeWalletsRepository, 'create').mockImplementationOnce(() => {
+      throw new AppError('BAD_REQUEST', 'Mocked wallet error', 500);
+    });
+
+    await expect(
+      createUserService.execute({
+        email: 'mockwalleterror@example.com',
+        password: 'password123',
+        name: 'Mock Wallet Error',
+      })
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should call invalidatePrefix multiple times when mocked', async (): Promise<void> => {
+    const spy = jest.spyOn(fakeCacheProvider, 'invalidatePrefix');
+    spy.mockResolvedValue(undefined);
+
+
+    await createUserService.execute({
+      email: 'multiinvalidate@example.com',
+      password: 'password123',
+      name: 'Multi Invalidate User',
+    });
+
+    await createUserService.execute({
+      email: 'multiinvalidate2@example.com',
+      password: 'password123',
+      name: 'Multi Invalidate User 2',
+    });
+
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('Should return custom user ID when usersRepository.create is mocked', async (): Promise<void> => {
+    jest.spyOn(fakeUsersRepository, 'create').mockResolvedValueOnce({
+      id: 'custom-id-mock',
+      email: 'customid@example.com',
+      password: 'mockedpass',
+      name: 'Custom ID User',
+      wallet: { id: 'wallet-mock', value: 5000 },
+    } as any);
+
+    const user = await createUserService.execute({
+      email: 'customid@example.com',
+      password: 'password123',
+      name: 'Custom ID User',
+    });
+
+    expect(user.data.id).toBe('custom-id-mock');
+    expect(user.data.wallet.value).toBe(5000);
+  });
+
+  it('Should always return false for usersRepository.exists when mocked', async (): Promise<void> => {
+    jest.spyOn(fakeUsersRepository, 'exists').mockResolvedValue(true);
+
+    await expect(
+      createUserService.execute({
+        email: 'mockexists@example.com',
+        password: 'password123',
+        name: 'Mock Exists User',
+      })
+    ).rejects.toEqual(new AppError('BAD_REQUEST', 'Email alerady exists', 400));
+  });
 });
