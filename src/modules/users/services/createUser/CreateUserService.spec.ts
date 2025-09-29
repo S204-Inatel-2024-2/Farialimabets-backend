@@ -329,4 +329,131 @@ describe('CreateUserService', (): void => {
       })
     ).rejects.toBeInstanceOf(AppError);
   });
+   it('Should create a user with special characters in the name', async (): Promise<void> => {
+    const user = await createUserService.execute({
+      email: 'special@example.com',
+      password: 'password123',
+      name: 'José da Silva!',
+    });
+
+    expect(user.data).toHaveProperty('id');
+    expect(user.data.name).toBe('José da Silva!');
+  });
+
+  it('Should create a user with a very long password (128 characters)', async (): Promise<void> => {
+    const longPassword = 'a'.repeat(128);
+    const user = await createUserService.execute({
+      email: 'longpass@example.com',
+      password: longPassword,
+      name: 'Long Pass User',
+    });
+
+    expect(user.data).toHaveProperty('id');
+    expect(user.data.password).not.toBe(longPassword); // deve estar hash
+  });
+
+  it('Should normalize email to lowercase when saving', async (): Promise<void> => {
+    const user = await createUserService.execute({
+      email: 'MIXEDCASE@EXAMPLE.COM',
+      password: 'password123',
+      name: 'Lowercase User',
+    });
+
+    expect(user.data.email).toBe('mixedcase@example.com');
+  });
+
+  it('Should create a user with optional description field', async (): Promise<void> => {
+    const user = await createUserService.execute({
+      email: 'desc@example.com',
+      password: 'password123',
+      name: 'Desc User',
+    });
+
+    expect(user.data).toHaveProperty('description');
+  });
+
+  it('Should set created_at when creating a user', async (): Promise<void> => {
+    const user = await createUserService.execute({
+      email: 'createdat@example.com',
+      password: 'password123',
+      name: 'Created At User',
+    });
+
+    expect(user.data).toHaveProperty('created_at');
+    expect(new Date(user.data.created_at).getTime()).not.toBeNaN();
+  });
+
+  it('Should fail when usersRepository.exists mock returns true', async (): Promise<void> => {
+    jest.spyOn(fakeUsersRepository, 'exists').mockResolvedValueOnce(true);
+
+    await expect(
+      createUserService.execute({
+        email: 'mockexists@example.com',
+        password: 'password123',
+        name: 'Mock Exists User',
+      })
+    ).rejects.toEqual(
+      new AppError('BAD_REQUEST', 'Email alerady exists', 400)
+    );
+  });
+
+  it('Should handle error when cacheProvider.invalidatePrefix is mocked to throw', async (): Promise<void> => {
+    jest.spyOn(fakeCacheProvider, 'invalidatePrefix').mockImplementationOnce(() => {
+      throw new AppError('BAD_REQUEST', 'Mocked cache failure', 500);
+    });
+
+    await expect(
+      createUserService.execute({
+        email: 'mockcache@example.com',
+        password: 'password123',
+        name: 'Mock Cache User',
+      })
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should call walletsRepository.create with mocked initial value', async (): Promise<void> => {
+    const walletSpy = jest.spyOn(fakeWalletsRepository, 'create');
+
+    await createUserService.execute({
+      email: 'mockwallet@example.com',
+      password: 'password123',
+      name: 'Mock Wallet User',
+    });
+
+    expect(walletSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ value: 25000 }),
+      expect.any(Object)
+    );
+  });
+
+  it('Should replace generated password hash with mocked value', async (): Promise<void> => {
+    jest.spyOn(fakeHashProvider, 'generateHash').mockResolvedValueOnce('MOCK_HASHED');
+
+    const user = await createUserService.execute({
+      email: 'mockhash@example.com',
+      password: 'password123',
+      name: 'Mock Hash User',
+    });
+
+    expect(user.data.password).toBe('MOCK_HASHED');
+  });
+
+  it('Should allow mocking usersRepository.create to return custom response', async (): Promise<void> => {
+    jest.spyOn(fakeUsersRepository, 'create').mockResolvedValueOnce({
+      id: 'custom-id-123',
+      email: 'mockcreate@example.com',
+      password: 'mocked-pass',
+      name: 'Mock Create User',
+      wallet: { id: 'wallet-123', value: 9999 },
+    } as any);
+
+    const user = await createUserService.execute({
+      email: 'mockcreate@example.com',
+      password: 'password123',
+      name: 'Mock Create User',
+    });
+
+    expect(user.data.id).toBe('custom-id-123');
+    expect(user.data.wallet.value).toBe(9999);
+  });
 });
