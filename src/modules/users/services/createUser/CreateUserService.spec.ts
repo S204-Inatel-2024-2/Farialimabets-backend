@@ -38,7 +38,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     );
   });
 
-  
+ 
   it('Should be able to create a new user with valid email, password, and name', async (): Promise<void> => {
     const user = await createUserService.execute({
       email: 'test@example.com',
@@ -83,10 +83,11 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
       name: 'Lowercase User',
     });
 
+ 
     expect(user.data.email).toBe('mixedcase@example.com');
   });
 
-  it('Should create a user without description (removed field to avoid error)', async (): Promise<void> => {
+  it('Should create a user without description', async (): Promise<void> => {
     const user = await createUserService.execute({
       email: 'desc@example.com',
       password: 'password123',
@@ -108,7 +109,6 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     expect(new Date(user.data.created_at).getTime()).not.toBeNaN();
   });
 
-  
   it('Should fail when usersRepository.exists mock returns true', async (): Promise<void> => {
     jest.spyOn(fakeUsersRepository, 'exists').mockResolvedValueOnce(true);
 
@@ -154,20 +154,6 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
 
   it('Should replace generated password hash with mocked value', async (): Promise<void> => {
     jest.spyOn(fakeHashProvider, 'generateHash').mockResolvedValueOnce('MOCK_HASHED');
-
-    jest.spyOn(fakeUsersRepository, 'create').mockImplementation(async (user) => {
-      return {
-        ...user,
-        id: 'user-id-123',
-        password: 'MOCK_HASHED',
-        wallet: { id: 'wallet-123', value: 25000 },
-        created_at: new Date(),
-        updated_at: new Date(),
-        deleted_at: null,
-        wallet_id: 'wallet-123',
-        shares: [],
-      } as any;
-    });
 
     const user = await createUserService.execute({
       email: 'mockhash@example.com',
