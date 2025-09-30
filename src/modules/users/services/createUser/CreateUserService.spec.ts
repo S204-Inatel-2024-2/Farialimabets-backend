@@ -20,29 +20,26 @@ let connection: IConnection;
 let createUserService: CreateUserService;
 
 describe('CreateUserService - CI/CD Safe Tests', (): void => {
-  beforeAll(() => {
+  beforeAll((): void => {
     connection = new Connection('database_test', FakeDataSource);
   });
 
-  beforeEach(() => {
+  beforeEach((): void => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCacheProvider = new FakeCacheProvider();
     fakeWalletsRepository = new FakeWalletsRepository();
     fakeHashProvider = new FakeHashProvider();
-
     createUserService = new CreateUserService(
       fakeUsersRepository,
       fakeCacheProvider,
       fakeWalletsRepository,
       connection,
-      fakeHashProvider
+      fakeHashProvider,
     );
   });
 
-  // --------------------
-  // 5 TESTES UNITÁRIOS
-  // --------------------
-  it('Should create a user with special characters in the name', async () => {
+  
+  it('Should create a user with special characters in the name', async (): Promise<void> => {
     const user = await createUserService.execute({
       email: 'special@example.com',
       password: 'password123',
@@ -53,7 +50,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     expect(user.data.name).toBe('José da Silva!');
   });
 
-  it('Should create a user with a very long password (128 characters)', async () => {
+  it('Should create a user with a very long password (128 characters)', async (): Promise<void> => {
     const longPassword = 'a'.repeat(128);
     const user = await createUserService.execute({
       email: 'longpass@example.com',
@@ -62,20 +59,20 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     });
 
     expect(user.data).toHaveProperty('id');
-    expect(user.data.password).not.toBe(longPassword);
+    expect(user.data.password).not.toBe(longPassword); // deve estar hash
   });
 
-  it('Should normalize email to lowercase when saving', async () => {
+  it('Should normalize email to lowercase when saving', async (): Promise<void> => {
     const user = await createUserService.execute({
       email: 'MIXEDCASE@EXAMPLE.COM',
       password: 'password123',
       name: 'Lowercase User',
     });
 
-    expect(user.data.email).toBe('mixedcase@example.com');
+    expect(user.data.email).toBe('mixedcase@example.com'); // normalize
   });
 
-  it('Should create a user without description', async () => {
+  it('Should create a user without description', async (): Promise<void> => {
     const user = await createUserService.execute({
       email: 'desc@example.com',
       password: 'password123',
@@ -86,7 +83,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     expect(user.data.name).toBe('Desc User');
   });
 
-  it('Should set created_at when creating a user', async () => {
+  it('Should set created_at when creating a user', async (): Promise<void> => {
     const user = await createUserService.execute({
       email: 'createdat@example.com',
       password: 'password123',
@@ -97,10 +94,8 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     expect(new Date(user.data.created_at).getTime()).not.toBeNaN();
   });
 
-  // --------------------
-  // 5 TESTES COM MOCKS
-  // --------------------
-  it('Should fail when usersRepository.exists mock returns true', async () => {
+ 
+  it('Should fail when usersRepository.exists mock returns true', async (): Promise<void> => {
     jest.spyOn(fakeUsersRepository, 'exists').mockResolvedValueOnce(true);
 
     await expect(
@@ -114,7 +109,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     );
   });
 
-  it('Should handle error when cacheProvider.invalidatePrefix is mocked to throw', async () => {
+  it('Should handle error when cacheProvider.invalidatePrefix is mocked to throw', async (): Promise<void> => {
     jest.spyOn(fakeCacheProvider, 'invalidatePrefix').mockImplementationOnce(() => {
       throw new AppError('BAD_REQUEST', 'Mocked cache failure', 500);
     });
@@ -128,7 +123,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should call walletsRepository.create with mocked initial value', async () => {
+  it('Should call walletsRepository.create with mocked initial value', async (): Promise<void> => {
     const walletSpy = jest.spyOn(fakeWalletsRepository, 'create');
 
     await createUserService.execute({
@@ -143,8 +138,17 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     );
   });
 
-  it('Should replace generated password hash with mocked value', async () => {
+  it('Should replace generated password hash with mocked value', async (): Promise<void> => {
     jest.spyOn(fakeHashProvider, 'generateHash').mockResolvedValueOnce('MOCK_HASHED');
+    jest.spyOn(fakeUsersRepository, 'create').mockImplementation(async (user) => {
+      return {
+        ...user,
+        id: 'user-id-123',
+        password: user.password, // propaga o hash
+        wallet: { id: 'wallet-123', value: 25000 },
+        created_at: new Date(),
+      };
+    });
 
     const user = await createUserService.execute({
       email: 'mockhash@example.com',
@@ -155,7 +159,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     expect(user.data.password).toBe('MOCK_HASHED');
   });
 
-  it('Should allow mocking usersRepository.create to return custom response', async () => {
+  it('Should allow mocking usersRepository.create to return custom response', async (): Promise<void> => {
     jest.spyOn(fakeUsersRepository, 'create').mockResolvedValueOnce({
       id: 'custom-id-123',
       email: 'mockcreate@example.com',
