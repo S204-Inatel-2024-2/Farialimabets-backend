@@ -19,13 +19,12 @@ services:
       - database:/var/lib/mysql
 
   redis:
-    image: bitnami/redis:7.0.12
+    image: redis:7.0-alpine
     restart: unless-stopped
     container_name: redis
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     networks:
       - rs-network
 
