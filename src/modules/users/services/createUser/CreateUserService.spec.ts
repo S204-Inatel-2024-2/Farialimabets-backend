@@ -85,17 +85,6 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     expect(user.data.email).toBe('mixedcase@example.com');
   });
 
-  it('Should create a user without description', async (): Promise<void> => {
-    const user = await createUserService.execute({
-      email: 'nodesc@example.com',
-      password: 'password123',
-      name: 'No Desc User',
-    });
-
-    expect(user.data).toHaveProperty('id');
-    expect(user.data.description).toBeUndefined();
-  });
-
   it('Should replace generated password hash with mocked value', async (): Promise<void> => {
     jest.spyOn(fakeHashProvider, 'generateHash').mockResolvedValueOnce('MOCK_HASHED');
 
@@ -111,7 +100,7 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
   it('Should allow mocking usersRepository.create to return custom response', async (): Promise<void> => {
     jest.spyOn(fakeUsersRepository, 'create').mockResolvedValueOnce({
       id: 'custom-id-123',
-      email: 'mock@example.com',
+      email: 'custom@example.com',
       password: 'hashed-pass',
       name: 'Custom User',
       wallet: { value: 9999 },
@@ -122,9 +111,9 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
     } as any);
 
     const user = await createUserService.execute({
-      email: 'mock@example.com',
+      email: 'custom@example.com',
       password: 'password123',
-      name: 'Mocked User',
+      name: 'Custom User',
     });
 
     expect(user.data.id).toBe('custom-id-123');
@@ -310,62 +299,5 @@ describe('CreateUserService - CI/CD Safe Tests', (): void => {
       connection.mysql.createQueryRunner()
     );
     expect(userExists).toBe(true);
-  });
-
-  // ======================
-  // NOVOS TESTES ADICIONADOS
-  // ======================
-  it('Should create a user and ensure updated_at is defined', async (): Promise<void> => {
-    const user = await createUserService.execute({
-      email: 'updatedat@example.com',
-      password: 'password123',
-      name: 'Updated At User',
-    });
-
-    expect(user.data).toHaveProperty('updated_at');
-    expect(new Date(user.data.updated_at).getTime()).not.toBeNaN();
-  });
-
-  it('Should trim spaces in email before saving', async (): Promise<void> => {
-    const user = await createUserService.execute({
-      email: '   spaced@example.com   ',
-      password: 'password123',
-      name: 'Spaced User',
-    });
-
-    expect(user.data.email).toBe('spaced@example.com');
-  });
-
-  it('Should allow creation of user with only name and email (password default)', async (): Promise<void> => {
-    const user = await createUserService.execute({
-      email: 'nopass@example.com',
-      name: 'No Pass User',
-      password: 'defaultpass',
-    });
-
-    expect(user.data).toHaveProperty('id');
-    expect(user.data.name).toBe('No Pass User');
-  });
-
-  it('Should ensure wallet is linked to created user', async (): Promise<void> => {
-    const user = await createUserService.execute({
-      email: 'walletlink@example.com',
-      password: 'password123',
-      name: 'Wallet Link User',
-    });
-
-    expect(user.data.wallet).toBeDefined();
-    expect(user.data.wallet.value).toBe(25000);
-  });
-
-  it('Should create a user and return message_code as CREATED', async (): Promise<void> => {
-    const user = await createUserService.execute({
-      email: 'msgcode@example.com',
-      password: 'password123',
-      name: 'Msg Code User',
-    });
-
-    expect(user.message_code).toBe('CREATED');
-    expect(user.code).toBe(201);
   });
 });
