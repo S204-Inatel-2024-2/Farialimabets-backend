@@ -20,13 +20,12 @@ env:
     REDIS_PORT: ${{ secrets.REDIS_PORT }}
     REDIS_PREFIX: ${{ secrets.REDIS_PREFIX }}
 
-
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
     - name: Adicionar IP do GitHub ao arquivo de hosts
       run: echo "$IP_DO_GITHUB github.com" | sudo tee -a /etc/hosts
       env:
@@ -34,34 +33,37 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "PORT={{ secrets.PORT }}" > .env
-        echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" >> .env
-        echo "API_URL=${API_URL}" >> .env
-        echo "EMAIL=${EMAIL}" >> .env
-        echo "MYSQL_DATABASE=${MYSQL_DATABASE}" >> .env
-        echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}" >> .env
-        echo "REDIS_HOST=${REDIS_HOST}" >> .env
-        echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}" >> .env
-        echo "MYSQL_PORT=${MYSQL_PORT}" >> .env
-        echo "MYSQL_USER=${MYSQL_USER}" >> .env
-        echo "NODE_ENV=${NODE_ENV}" >> .env
-        echo "PORT=${PORT}" >> .env
-        echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
-        echo "REDIS_PORT=${REDIS_PORT}" >> .env
-        echo "REDIS_PREFIX=${REDIS_PREFIX}" >> .env
+        echo "PORT=${{ secrets.PORT }}" > .env
+        echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+        echo "API_URL=${{ secrets.API_URL }}" >> .env
+        echo "EMAIL=${{ secrets.EMAIL }}" >> .env
+        echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+        echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+        echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+        echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+        echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+        echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+        echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+        echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+        echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
+        echo "REDIS_PREFIX=${{ secrets.REDIS_PREFIX }}" >> .env
 
     - name: Install dependencies
       run: npm install
+
+    - name: Pull docker images
+      run: docker compose pull
+
     - name: Run docker images
       run: docker compose up -d  
-      
+
     - name: Run api
       run: |
         yarn dev &
 
     - name: Run tests
       run: |  
-        sleep 10
+        sleep 15
         yarn test --testPathPattern=Service.spec.ts
   
   build:
@@ -74,11 +76,9 @@ jobs:
         with:
           node-version: '22.16.0'
 
-
       - name: Install dependencies
         run: npm install
 
-  
       - name: Build
         run: npm run build
 

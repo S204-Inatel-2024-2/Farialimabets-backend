@@ -11,7 +11,7 @@ import { FakeWalletsRepository } from '@modules/finances/repositories/fakes/Fake
 import { FakeHashProvider } from '@shared/container/providers/HashProvider/fakes/FakeHashProvider';
 import { IHashProviderDTO } from '@shared/container/providers/HashProvider/models/IHashProvider';
 
-jest.setTimeout(20000); // Timeout maior para CI/CD
+jest.setTimeout(20000); 
 
 let fakeUsersRepository: IUsersRepository;
 let fakeCacheProvider: ICacheProvider;
