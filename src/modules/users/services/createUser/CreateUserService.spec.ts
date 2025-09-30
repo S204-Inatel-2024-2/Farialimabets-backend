@@ -10,8 +10,7 @@ import { IWalletsRepository } from '@modules/finances/repositories/IWalletsRepos
 import { FakeWalletsRepository } from '@modules/finances/repositories/fakes/FakeWalletsRepository';
 import { FakeHashProvider } from '@shared/container/providers/HashProvider/fakes/FakeHashProvider';
 import { IHashProviderDTO } from '@shared/container/providers/HashProvider/models/IHashProvider';
-
-jest.setTimeout(20000); 
+import { IUserDTO } from '@modules/users/dtos/IUserDTO';
 
 let fakeUsersRepository: IUsersRepository;
 let fakeCacheProvider: ICacheProvider;
@@ -20,7 +19,7 @@ let fakeHashProvider: IHashProviderDTO;
 let connection: IConnection;
 let createUserService: CreateUserService;
 
-describe('CreateUserService - CI/CD Safe Tests', () => {
+describe('CreateUserService - CI/CD Safe Tests', (): void => {
   beforeAll(() => {
     connection = new Connection('database_test', FakeDataSource);
   });
@@ -30,6 +29,7 @@ describe('CreateUserService - CI/CD Safe Tests', () => {
     fakeCacheProvider = new FakeCacheProvider();
     fakeWalletsRepository = new FakeWalletsRepository();
     fakeHashProvider = new FakeHashProvider();
+
     createUserService = new CreateUserService(
       fakeUsersRepository,
       fakeCacheProvider,
@@ -39,12 +39,9 @@ describe('CreateUserService - CI/CD Safe Tests', () => {
     );
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-    jest.clearAllMocks();
-  });
-
-
+  // --------------------
+  // 5 TESTES UNITÁRIOS
+  // --------------------
   it('Should create a user with special characters in the name', async () => {
     const user = await createUserService.execute({
       email: 'special@example.com',
@@ -100,6 +97,9 @@ describe('CreateUserService - CI/CD Safe Tests', () => {
     expect(new Date(user.data.created_at).getTime()).not.toBeNaN();
   });
 
+  // --------------------
+  // 5 TESTES COM MOCKS
+  // --------------------
   it('Should fail when usersRepository.exists mock returns true', async () => {
     jest.spyOn(fakeUsersRepository, 'exists').mockResolvedValueOnce(true);
 
@@ -115,7 +115,7 @@ describe('CreateUserService - CI/CD Safe Tests', () => {
   });
 
   it('Should handle error when cacheProvider.invalidatePrefix is mocked to throw', async () => {
-    jest.spyOn(fakeCacheProvider, 'invalidatePrefix').mockImplementationOnce(async () => {
+    jest.spyOn(fakeCacheProvider, 'invalidatePrefix').mockImplementationOnce(() => {
       throw new AppError('BAD_REQUEST', 'Mocked cache failure', 500);
     });
 
@@ -129,7 +129,7 @@ describe('CreateUserService - CI/CD Safe Tests', () => {
   });
 
   it('Should call walletsRepository.create with mocked initial value', async () => {
-    const walletSpy = jest.spyOn(fakeWalletsRepository, 'create').mockResolvedValue({ id: 'mock-wallet', value: 25000 } as any);
+    const walletSpy = jest.spyOn(fakeWalletsRepository, 'create');
 
     await createUserService.execute({
       email: 'mockwallet@example.com',
